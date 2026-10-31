@@ -1,25 +1,20 @@
-# Meshwork HTML design
+# Meshwork HTML design prototype
 
-The HTML prototype is the canonical design reference for the main Meshwork pages.
+This HTML file is a legacy standalone concept/prototype, not the production app and not the final authority for every current page.
 
-## Run locally
+## Current design authority
 
-Open index.html directly in a current desktop browser. It has no build step, package dependencies, remote CDN assets or network requirement.
+Follow [the TL handoff](../docs/TL_HANDOFF_DESIGN_REPRODUCTION.md) for the current approved design and acceptance rules.
 
-## Included screens
+- New Task/workspace: reproduce the user-approved Meshwork/ZCode workspace reference while reusing ZCode components and services.
+- Connections: preserve the accepted dark Meshwork aggregation design. Do not simplify it.
+- Connection Marketplace: use the exact [Figma frame 8:36](https://www.figma.com/design/gjiEUMQeKHL7pMNtuzM3FL/Meshwork-%E2%80%94-Agent-Workspace---Connectivity-Network?node-id=8-36&t=apSw7DombY4XJVit-0), not the older marketplace cards/tabs in this HTML.
+- Settings and existing capability pages: retain the native ZCode UI, routes and persistence. Do not recreate Settings from this HTML or from a chat preview.
 
-- New Task: ZCode-shaped workspace with project selector, intent composer and separately toggleable Browser and Terminal docks.
-- Connections: WAN inventory, measured-versus-advertised information, multi-WAN, failover, traffic policy and the single-flow bonding distinction.
-- My Nodes: node state and default-off capability grants.
-- Marketplace: buying access, selling capacity and group purchasing.
-- Tasks, Automations and Settings: navigation continuity with the existing workspace.
+## Run the legacy prototype
 
-## Prototype behavior
-
-Navigation, project selection, Browser/Terminal dock toggles, example prompts, marketplace tabs and the sharing-consent preview work locally. Buttons that would need a real runtime, network adapter, payment provider or coordinator intentionally identify themselves as prototype-only; they do not claim to perform those actions.
+Open `index.html` directly in a current desktop browser. It has no build step, package dependencies, remote CDN assets or network requirement.
 
 ## Implementation rule
 
-Use this HTML as the primary visual/interaction reference when implementing the main pages in the ZCode/React application. Reuse actual ZCode components, design tokens, project/task services, browser/terminal dock state and platform abstractions. Do not port the HTML as an embedded WebView replacement for the native/shared React UI.
-
-The Figma concept remains a secondary visual reference only. It is not the design sign-off gate.
+Use the prototype only as a source of earlier interaction ideas where it does not conflict with the current TL handoff. Production implementation must use the existing ZCode React components, design tokens, hooks, services, stores and platform APIs. Do not embed this HTML in a WebView as a substitute for the application UI.
