@@ -1,5 +1,11 @@
 # Implementation plan and team handoff
 
+**Current UI reproduction work order:** follow [docs/TL_HANDOFF_DESIGN_REPRODUCTION.md](TL_HANDOFF_DESIGN_REPRODUCTION.md) as the authoritative design and acceptance specification for the workspace shell, New Task, Connections, Connection Marketplace and Settings integration. For this UI sprint, its TL + three-worker assignment supersedes the broader long-term ownership split below; after the UI sprint, return workers to their milestone responsibilities.
+
+**Non-negotiable Settings rule:** Settings must use the existing ZCode Settings route, components, navigation, controls and persistence. Do not build a Meshwork-only Settings page. Workspace navigation is hidden while native Settings is open; Back to workspace restores the previous sidebar state. The M logo docks/restores the workspace navigation pane.
+
+**Design references:** New Task/workspace screenshot and approved dark Meshwork design; accepted Connections page design; [Figma Connection Marketplace frame 8:36](https://www.figma.com/design/gjiEUMQeKHL7pMNtuzM3FL/Meshwork-%E2%80%94-Agent-Workspace---Connectivity-Network?node-id=8-36&t=apSw7DombY4XJVit-0). The Figma frame supersedes the legacy HTML marketplace mockup. Preserve existing ZCode Settings; the Settings screenshot documents behaviour to retain, not a new page to recreate.
+
 ## TL mandate
 
 The TL owns integration, source-of-truth documentation, interfaces, sequencing, review gates, CI and releases. The TL must split work among three workers while preserving interface contracts. Workers may prepare branches/PRs, but the TL owns integration and end-to-end correctness.
