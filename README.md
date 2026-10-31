@@ -26,26 +26,28 @@ Users should not need to understand MPTCP, policy routing, Linux traffic control
 
 Meshwork should extend the existing ZCode runtime and platform boundaries. Do not replace the task/session runtime, create a second task queue, rebuild browser/terminal/plugin/automation functionality, or create a separate agent framework.
 
-## Main-page design — HTML is canonical
+## Design authority and current UI handoff
 
-**Primary design reference: [Interactive HTML prototype](design/index.html)**  
-[Design run instructions](design/README.md)
+**Current implementation authority:** [TL handoff — reproduce the approved Meshwork design](docs/TL_HANDOFF_DESIGN_REPRODUCTION.md).
 
-Open design/index.html directly in a current desktop browser; it has no build step or remote dependencies. It contains the main New Task workspace, Connections & Aggregation, My Nodes, Marketplace / Buy-Sell-Group-buy, Tasks, Automations and Settings surfaces, with local prototype interactions.
+This handoff supersedes older conflicting UI instructions. Its page-specific reference hierarchy is:
 
-The HTML design is the canonical source for main-page visual and interaction intent. Figma is a secondary exploration/reference file only; do not block implementation or sign-off on Figma work. When HTML and Figma differ, follow HTML and this repository's architecture/design constraints.
+- **New Task and workspace shell:** user-approved Meshwork/ZCode workspace screenshot and the approved dark Meshwork reference. Preserve the existing ZCode shell, project/task/runtime behaviour and browser/terminal components.
+- **Connections:** the accepted dark Meshwork Connections design, with its full path inventory, five aggregation modes, estimates, traffic allocation and community-connectivity section.
+- **Connection Marketplace:** the exact [Figma frame 8:36](https://www.figma.com/design/gjiEUMQeKHL7pMNtuzM3FL/Meshwork-%E2%80%94-Agent-Workspace---Connectivity-Network?node-id=8-36&t=apSw7DombY4XJVit-0). The Figma frame supersedes the older HTML marketplace mockup for this page only.
+- **Settings and existing ZCode capability pages:** preserve the existing ZCode screens, routes, navigation, controls and persistence. Do not create a separate Meshwork Settings implementation.
 
-### Main-page invariants
+The legacy [HTML design prototype](design/index.html) remains useful as an interaction/reference prototype for earlier concepts, but it is not the Marketplace design authority and must not be used to replace existing ZCode Settings. Implement in the existing ZCode React/shared UI stack; do not ship the HTML as a WebView replacement.
+
+### Navigation and interaction invariants
 
 - New Task remains the primary entry point.
-- The project selector remains visible and must use ZCode's existing project assignment/service.
-- Browser and Terminal have separate top-right toggles, independent open/close state, and can be opened together.
-- Existing task/session, model, tools, automations, plugins, settings and platform window-control behavior remain intact.
-- Network aggregation modes must be truthfully distinguished: multi-WAN flow balancing, policy routing, failover, cross-node relay and true single-flow bonding are not interchangeable.
-- Sharing, hotspot, relay and exit-node capabilities remain off until explicit owner permission.
-- HTML is a reference prototype, not a replacement WebView application. Implement with existing ZCode React components, services, hooks, tokens and platform APIs.
-
-Figma concept: [Meshwork — Agent Workspace & Connectivity Network](https://www.figma.com/design/gjiEUMQeKHL7pMNtuzM3FL). It is retained for optional exploration; it is not the source of truth.
+- Place **Network immediately below Workspace** in the workspace navigation.
+- The Meshwork M logo toggles the left navigation between full and docked/collapsed states. It must preserve the active page and workspace state.
+- Settings opens the existing ZCode Settings route. The workspace left pane is removed while Settings is open; **Back to workspace** restores the previous workspace view and sidebar state.
+- Browser, Terminal and Devices controls use existing ZCode tool/dock components. Browser and Terminal retain independent visibility state and can remain open together.
+- Keep existing projects, task/session, model, permission, automations, plugins and platform window-control behaviour.
+- Network sharing, hotspot, relay and exit-node capabilities remain disabled until explicitly authorised.
 
 ## Architecture principles
 
@@ -60,7 +62,8 @@ Figma concept: [Meshwork — Agent Workspace & Connectivity Network](https://www
 
 ## Start here
 
-- [Interactive HTML design](design/index.html)
+- [Current TL UI handoff](docs/TL_HANDOFF_DESIGN_REPRODUCTION.md)
+- [Interactive HTML design prototype](design/index.html)
 - [HTML design guide](design/README.md)
 - [Reference repository review](docs/REFERENCE_REPOSITORY_REVIEW.md)
 - [Architecture](docs/ARCHITECTURE.md)
