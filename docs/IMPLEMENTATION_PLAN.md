@@ -23,10 +23,10 @@ The TL owns integration, source-of-truth documentation, interfaces, sequencing, 
 
 ### Worker 1 — Workspace UI and HTML design implementation
 
-- Treat [design/index.html](../design/index.html) as the canonical visual/interaction reference for main pages. Figma is optional secondary material only.
+- Follow [the current TL design handoff](TL_HANDOFF_DESIGN_REPRODUCTION.md) as the authoritative visual/interaction specification. The legacy [design/index.html](../design/index.html) is a reference prototype only. Use the exact Figma Marketplace frame linked in the handoff for Connection Marketplace.
 - Translate the HTML prototype into ZCode shared React components and platform surfaces. Do not ship it as an embedded WebView or add a separate UI runtime.
-- Preserve the New Task entry, projects/task assignment, task list, model selector, permissions, context/commands, automations, plugin marketplace, skills, memory, subagents, browser/terminal toggles and settings.
-- Add Connections, My Nodes and Marketplace navigation.
+- Preserve the New Task entry, projects/task assignment, task list, model selector, permissions, context/commands, automations, plugin marketplace, browser/terminal toggles and settings. Keep existing ZCode Settings routes/components/state/persistence; do not build a parallel Meshwork Settings page. Agent capabilities remain in the existing ZCode Settings/capability surfaces, not a new workspace sidebar group.
+- Add the Network navigation group immediately below Workspace, with Connections, Connection Marketplace, My Offers, Devices & Nodes and Group Buying.
 - Preserve the visible project selector and ensure it changes the target project using existing ZCode project services.
 - Preserve independent top-right Browser and Terminal controls; both can remain open together, with persisted visibility/layout and correct maximize/restore behavior.
 - Add responsive desktop/web layouts without regressing keyboard, localization, themes or accessibility.
@@ -71,7 +71,7 @@ Exit: clean baseline launch/install on Linux and Windows; baseline failures expl
 - Implement the HTML New Task design as the default route using existing ZCode React/services.
 - Wire Browser/Terminal dock toggles (independent state, both can open, persisted layout), project selector, prompt actions, model selector and approval mode.
 - Add Connections/My Nodes/Marketplace navigation.
-- Retain existing settings and capability surfaces.
+- Retain existing ZCode Settings and capability surfaces unchanged; Settings hides the workspace left pane and Back to workspace restores its prior state. The M logo docks/restores the workspace navigation.
 
 Exit: desktop and web E2E for new task, project assignment, task restore, independent dock visibility/resizing, automation/plugin navigation and existing settings.
 
@@ -162,7 +162,7 @@ Exit: reproducible install artifacts and clean-machine verification on supported
 
 1. Create the ZCode fork/base and verify clean Linux/Windows packaging.
 2. Perform a focused source map of New Task, project/task state, browser/terminal dock, settings, automation, plugin and workflow runtime.
-3. Implement the canonical HTML design using existing ZCode tokens/components and verify it against actual project/task/dock services.
+3. Implement the approved New Task and Connections references using existing ZCode tokens/components; implement Connection Marketplace from Figma frame 8:36; reuse existing ZCode Settings. Verify against real project/task/dock services.
 4. In parallel, Worker 3 prepares a gateway adapter spike without touching production routing by default: enumerate interfaces, render topology, dry-run plan, no privileges.
 5. Worker 2 defines typed intent/plan contracts against actual ZCode runtime ports.
 6. TL performs integration and ensures docs, code and tests remain in sync.
