@@ -2,14 +2,13 @@
 
 **Meshwork is an agent-operated workspace and a collaborative connectivity economy.** It combines the ZCode agent workspace/runtime with a permissioned network of user-operated nodes, gateways, connection providers, relays and community demand pools.
 
-This repository is the source of truth for product requirements, architecture decisions, implementation milestones, security rules, research references and handoffs. Implementation must not depend on the original ChatGPT conversation.
+This repository is the source of truth for product requirements, architecture decisions, implementation milestones, security rules, research references, design and handoffs. Implementation must not depend on the original ChatGPT conversation.
 
 ## Product north star
 
 A user expresses an outcome in natural language. Meshwork turns that request into a typed, inspectable and permissioned execution plan, selects the tools and network capabilities that can actually satisfy it, obtains approvals, executes through deterministic adapters, verifies the result and records the evidence.
 
 Examples:
-
 - “Combine home fibre, 5G and Starlink for the best connection.”
 - “Use multiple links for this large upload; keep video calls on the lowest-latency path.”
 - “Find a permitted nearby connection and use it as a temporary backup.”
@@ -23,20 +22,30 @@ Users should not need to understand MPTCP, policy routing, Linux traffic control
 
 - Base: [zai-org/ZCode](https://github.com/zai-org/ZCode), an Apache-2.0 desktop/web coding-agent workspace with an existing Electron desktop app, shared UI, services/RPC, Agent CLI/runtime, plugins, automations, browser, terminal and dynamic-workflow compiler/runtime.
 - Network implementation reference: [meshlink-wifi-gateway](https://github.com/meshlinkfoundation/meshlink-wifi-gateway) and [meshlinkfoundation/broker](https://github.com/meshlinkfoundation/broker).
-- Bonding reference to evaluate: [OpenMPTCProuter](https://github.com/Ysurac/openmptcprouter), especially its multi-WAN MPTCP plus remote relay/VPS approach.
+- Bonding reference to evaluate: [OpenMPTCProuter](https://github.com/Ysurac/openmptcprouter), especially its multi-WAN multipath plus remote relay/VPS approach.
 
 Meshwork should extend the existing ZCode runtime and platform boundaries. Do not replace the task/session runtime, create a second task queue, rebuild browser/terminal/plugin/automation functionality, or create a separate agent framework.
 
-## Current design
+## Main-page design — HTML is canonical
 
-Figma: [Meshwork — Agent Workspace & Connectivity Network](https://www.figma.com/design/gjiEUMQeKHL7pMNtuzM3FL)
+**Primary design reference: [Interactive HTML prototype](design/index.html)**  
+[Design run instructions](design/README.md)
 
-The file contains three editable pages:
-1. **01 — New Task Workspace** — first-run/primary work surface, project selector, natural-language composer, agent controls, example intents, Browser/Terminal dock toggles.
-2. **02 — Connections & Aggregation** — local WAN inventory, aggregation modes, traffic policy and bonding relay configuration.
-3. **03 — Marketplace & Community** — buy access, sell spare capacity and group purchasing.
+Open design/index.html directly in a current desktop browser; it has no build step or remote dependencies. It contains the main New Task workspace, Connections & Aggregation, My Nodes, Marketplace / Buy-Sell-Group-buy, Tasks, Automations and Settings surfaces, with local prototype interactions.
 
-The current Figma Starter plan permits three pages; keep related subflows on those pages unless the plan changes. The design uses native editable Figma layers and Material 3 library components where practical. A post-build screenshot QA pass remains outstanding because the Figma MCP Starter quota was reached during this design session.
+The HTML design is the canonical source for main-page visual and interaction intent. Figma is a secondary exploration/reference file only; do not block implementation or sign-off on Figma work. When HTML and Figma differ, follow HTML and this repository's architecture/design constraints.
+
+### Main-page invariants
+
+- New Task remains the primary entry point.
+- The project selector remains visible and must use ZCode's existing project assignment/service.
+- Browser and Terminal have separate top-right toggles, independent open/close state, and can be opened together.
+- Existing task/session, model, tools, automations, plugins, settings and platform window-control behavior remain intact.
+- Network aggregation modes must be truthfully distinguished: multi-WAN flow balancing, policy routing, failover, cross-node relay and true single-flow bonding are not interchangeable.
+- Sharing, hotspot, relay and exit-node capabilities remain off until explicit owner permission.
+- HTML is a reference prototype, not a replacement WebView application. Implement with existing ZCode React components, services, hooks, tokens and platform APIs.
+
+Figma concept: [Meshwork — Agent Workspace & Connectivity Network](https://www.figma.com/design/gjiEUMQeKHL7pMNtuzM3FL). It is retained for optional exploration; it is not the source of truth.
 
 ## Architecture principles
 
@@ -51,18 +60,22 @@ The current Figma Starter plan permits three pages; keep related subflows on tho
 
 ## Start here
 
+- [Interactive HTML design](design/index.html)
+- [HTML design guide](design/README.md)
 - [Reference repository review](docs/REFERENCE_REPOSITORY_REVIEW.md)
 - [Architecture](docs/ARCHITECTURE.md)
 - [Connection aggregation specification](docs/NETWORK_AGGREGATION.md)
 - [Security and permission model](docs/SECURITY_MODEL.md)
 - [Implementation plan and TL/worker ownership](docs/IMPLEMENTATION_PLAN.md)
-- [Figma design specification](docs/FIGMA_DESIGN.md)
+- [Network research references](docs/RESEARCH_REFERENCES.md)
+- [Figma archive note](docs/FIGMA_DESIGN.md)
 
 ## Implementation status
 
 - [x] Upstream ZCode and MeshLink reference repositories inspected at source level.
-- [x] Three-page editable Figma concept authored.
-- [x] Initial architecture, aggregation, security and milestone requirements written into this repository.
+- [x] Main-page HTML design prototype authored and made canonical.
+- [x] Three-page Figma concept retained as secondary reference.
+- [x] Initial architecture, aggregation, security, research and milestone requirements written into this repository.
 - [ ] Fork/copy ZCode upstream into this repository and preserve all notices/licence obligations.
 - [ ] Build and verify baseline Linux and Windows desktop installers before product changes.
 - [ ] Implement New Task integration and complete UI regression coverage.
@@ -70,4 +83,4 @@ The current Figma Starter plan permits three pages; keep related subflows on tho
 - [ ] Demonstrate multi-WAN policy routing, failover, and true single-flow bonding independently.
 - [ ] Implement node marketplace, metering, group buying and payment reconciliation.
 
-**Important:** Repository documentation and Figma are prepared; this does not claim the ZCode fork, runtime integration, network data plane or live marketplace have been implemented.
+**Important:** Repository documentation and the HTML design are prepared; this does not claim the ZCode fork, runtime integration, network data plane or live marketplace have been implemented.
