@@ -63,6 +63,7 @@ The legacy [HTML design prototype](design/index.html) remains useful as an inter
 ## Start here
 
 - [Current TL UI handoff](docs/TL_HANDOFF_DESIGN_REPRODUCTION.md)
+- [TL implementation report — workspace UI reproduction](docs/IMPLEMENTATION_REPORT_UI_REPRODUCTION.md) (with evidence screenshots in `docs/evidence/`)
 - [Interactive HTML design prototype](design/index.html)
 - [HTML design guide](design/README.md)
 - [Reference repository review](docs/REFERENCE_REPOSITORY_REVIEW.md)
