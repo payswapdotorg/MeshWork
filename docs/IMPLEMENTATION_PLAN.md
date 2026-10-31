@@ -15,14 +15,17 @@ The TL owns integration, source-of-truth documentation, interfaces, sequencing, 
 - Maintain repo documentation and status/progress evidence.
 - Reject UI placeholders, mocks represented as completed functionality, arbitrary privileged command execution and unverified aggregation claims.
 
-### Worker 1 — Workspace UI and Figma
+### Worker 1 — Workspace UI and HTML design implementation
 
-- Translate the three Figma pages into ZCode shared React components and platform surfaces.
+- Treat [design/index.html](../design/index.html) as the canonical visual/interaction reference for main pages. Figma is optional secondary material only.
+- Translate the HTML prototype into ZCode shared React components and platform surfaces. Do not ship it as an embedded WebView or add a separate UI runtime.
 - Preserve the New Task entry, projects/task assignment, task list, model selector, permissions, context/commands, automations, plugin marketplace, skills, memory, subagents, browser/terminal toggles and settings.
 - Add Connections, My Nodes and Marketplace navigation.
+- Preserve the visible project selector and ensure it changes the target project using existing ZCode project services.
+- Preserve independent top-right Browser and Terminal controls; both can remain open together, with persisted visibility/layout and correct maximize/restore behavior.
 - Add responsive desktop/web layouts without regressing keyboard, localization, themes or accessibility.
 - Build UI around actual typed service state; no fake data in production.
-- Figma: https://www.figma.com/design/gjiEUMQeKHL7pMNtuzM3FL
+- Use ZCode semantic tokens, Zai light/dark themes, typography scale, shared components, hooks and platform service APIs.
 
 ### Worker 2 — Agent orchestration and deterministic workflow
 
@@ -59,12 +62,12 @@ Exit: clean baseline launch/install on Linux and Windows; baseline failures expl
 ### M1 — New Task-first workspace
 
 - Preserve ZCode task/project and runtime contracts.
-- Add product identity/visual system; New Task as default route.
-- Wire browser/terminal dock toggles (separate states and persisted layout), projects selector, prompt actions, model selector and approval mode.
+- Implement the HTML New Task design as the default route using existing ZCode React/services.
+- Wire Browser/Terminal dock toggles (independent state, both can open, persisted layout), project selector, prompt actions, model selector and approval mode.
 - Add Connections/My Nodes/Marketplace navigation.
 - Retain existing settings and capability surfaces.
 
-Exit: desktop and web E2E for new task, project assignment, task restore, dock visibility/resizing, automation/plugin navigation and existing settings.
+Exit: desktop and web E2E for new task, project assignment, task restore, independent dock visibility/resizing, automation/plugin navigation and existing settings.
 
 ### M2 — Deterministic intent and execution engine
 
@@ -147,13 +150,13 @@ Exit: reproducible install artifacts and clean-machine verification on supported
 - Tests must run against actual adapters/integration environments where the milestone requires real network behavior. Mocks are allowed for deterministic unit tests but cannot satisfy integration acceptance.
 - Before broad refactors, run repo architecture governance and affected tests. Use architecture contracts to stop circular dependencies and accidental UI/service coupling.
 - TL should require source paths, callsites, migrations, CI results, E2E trace and install artifacts in each worker handoff.
-- No milestone is complete because a planning document or Figma screen exists.
+- No milestone is complete because a planning document, mockup or HTML design exists.
 
 ## First work order
 
 1. Create the ZCode fork/base and verify clean Linux/Windows packaging.
 2. Perform a focused source map of New Task, project/task state, browser/terminal dock, settings, automation, plugin and workflow runtime.
-3. Start Figma-to-component implementation only after confirming existing ZCode design tokens and components.
+3. Implement the canonical HTML design using existing ZCode tokens/components and verify it against actual project/task/dock services.
 4. In parallel, Worker 3 prepares a gateway adapter spike without touching production routing by default: enumerate interfaces, render topology, dry-run plan, no privileges.
 5. Worker 2 defines typed intent/plan contracts against actual ZCode runtime ports.
 6. TL performs integration and ensures docs, code and tests remain in sync.
