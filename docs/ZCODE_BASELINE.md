@@ -48,9 +48,11 @@ Environment: sandbox container — 4 GiB memory cgroup (`memory.max` = 4,294,967
 
 The vite 8 / rolldown production build of the workspace UI (web + desktop renderer, ~8.3 k modules each) peaks above 3.5 GB RSS and is killed by the 4 GiB cgroup OOM killer — a **resource ceiling of this verification environment, not an upstream code failure**. The same install and lighter builds succeed here. Completing the baseline (renderer build → electron-builder installers for Linux and Windows) requires a runner with **≥ 8 GB RAM** (16 GB recommended); the pinned toolchain and commands are exactly as above. Recommended next environment: GitHub Actions `ubuntu-latest` / `windows-latest` hosted runners, which also match upstream's CI matrix (`scripts/` contains the electron-builder mirror verification and E2E container scripts).
 
-## 4. Baseline functional verification
+## 4. Baseline functional verification (runtime smoke — performed)
 
-Not yet performed against the real ZCode runtime in this environment: the desktop app needs the renderer build above, and this container has no display. The M0 checklist items — projects/tasks, task session, Browser, Terminal, automations, plugins, settings, memory — remain open until the baseline build runs on an adequately sized runner. Honest status: **not verified here; blocked by resources, recorded rather than faked.**
+The vendored runtime was launched for a real smoke check: the **genuine ZCode server v3.17.1** (from the vendored tree, zero modifications) booted with clean SQLite migrations and served `/api/server-info` (capabilities on, `failedPathCount: 0`); the web dev server served the genuine ZCode login/workspace UI; websocket RPC round-trips succeeded (`provider-settings.refresh OK`). The interactive session is blocked twice over: login needs Z.ai/BigModel credentials or their API keys (not in this project's key set), and the vite dev dep-optimizer was OOM-killed at 2.58 GB RSS against the 4 GiB cgroup while the MeshWork dev server was resident. Screenshot: [evidence/zcode-baseline-login-web.png](evidence/zcode-baseline-login-web.png); full details in [zcode-baseline-functional.md](zcode-baseline-functional.md).
+
+The remaining M0 checklist items — projects/tasks, task session, Browser, Terminal, automations, plugins, settings, memory — need the sized runner **and** provider credentials; honest status: **open, recorded rather than faked.**
 
 ## 5. Repo layout after vendoring
 
