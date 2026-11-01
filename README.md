@@ -78,6 +78,26 @@ terminal/devices dock, automations with run history, the plugin marketplace and 
 ZCode settings incl. Model settings — plus the Meshwork connectivity network pages
 (Connections with all five aggregation modes, Connection Marketplace, devices and nodes).
 
+### One command (macOS / Linux / WSL)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/payswapdotorg/MeshWork/main/install.sh | sh
+meshwork start        # → http://localhost:3000
+```
+
+The installer follows the ZCode distribution model: it clones the repo (app/ only,
+via sparse checkout), installs dependencies, writes `.env`, creates the database and
+drops a `meshwork` command in `~/.local/bin` (Bun is installed automatically if no
+runtime is found). It needs `git` + `curl` and is safe to re-run — `.env`, the
+database and builds survive reinstalls and `meshwork update`.
+
+`meshwork start | stop | restart | status | logs | update | doctor | open` — start
+options: `--port N`, `--dev` (dev server), `--build` (force a production rebuild).
+See [docs/INSTALLATION.md](docs/INSTALLATION.md) for all install paths, including the
+ZCode desktop installers and the runtime tarball built by CI.
+
+### Manual
+
 ```bash
 git clone https://github.com/payswapdotorg/MeshWork.git
 cd MeshWork/app
@@ -107,8 +127,9 @@ See [`app/README.md`](app/README.md) for the full feature tour, scripts, structu
 - [x] Main-page HTML design prototype authored and made canonical.
 - [x] Three-page Figma concept retained as secondary reference.
 - [x] Initial architecture, aggregation, security, research and milestone requirements written into this repository.
-- [ ] Fork/copy ZCode upstream into this repository and preserve all notices/licence obligations.
-- [ ] Build and verify baseline Linux and Windows desktop installers before product changes.
+- [x] ZCode upstream vendored at `zcode/` (pinned commit, notices preserved) — [ZCODE_BASELINE.md](docs/ZCODE_BASELINE.md).
+- [x] Meshwork web app one-command install (`install.sh` + `meshwork` command) — [INSTALLATION.md](docs/INSTALLATION.md).
+- [ ] Build and verify baseline Linux and Windows desktop installers before product changes — CI pipeline added ([`installers.yml`](.github/workflows/installers.yml)); see [Implementation status in INSTALLATION.md](docs/INSTALLATION.md#status).
 - [x] Meshwork web application implemented in [`app/`](app) (ZCode workspace behavior restored: task traces, groups, automations, plugin marketplace, settings incl. Model settings; Meshwork Connections + Connection Marketplace per the approved references).
 - [ ] Implement the network capability model and Linux node adapter.
 - [ ] Demonstrate multi-WAN policy routing, failover, and true single-flow bonding independently.

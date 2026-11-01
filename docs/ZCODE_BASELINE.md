@@ -63,3 +63,26 @@ MeshWork/
 ├── design/     # approved HTML design prototypes (reference only)
 └── docs/       # requirements, ADRs, handoffs, reports, evidence
 ```
+
+## 6. CI installer pipeline (M0)
+
+The renderer-build blocker in §3 is a memory ceiling of this sandbox, not of the code.
+[`.github/workflows/installers.yml`](../.github/workflows/installers.yml) completes the
+baseline on GitHub-hosted runners (16 GB), directly using the toolchain pins from §2:
+
+| Job | Runner | Commands | Artifacts |
+|---|---|---|---|
+| `linux` | `ubuntu-latest` + `rpm libarchive-tools fakeroot` | `pnpm install` → `pnpm bundle:desktop --linux --x64` | `.AppImage`, `.deb`, `.rpm`, `.pkg.tar.zst` + `SHA256SUMS-linux.txt` |
+| `windows` | `windows-latest` | `pnpm install` → `pnpm bundle:desktop --win --x64` | NSIS `.exe` (+ blockmap) + `SHA256SUMS-windows.txt` |
+| `runtime` | `ubuntu-latest` | `pnpm install` → `pnpm build:zcode --base-url <release-url>` (+ tarball extract + `zcode.mjs --version` smoke) | runtime `tar.gz`, `sha256.txt`, `latest.json`, `install.sh` |
+| `release` | on `v*` tags | collects the above | GitHub Release with all installers + notes |
+
+`bundle:desktop` runs upstream's own `prepare:runtime-assets` → `build` → electron-builder
+chain inside `packages/desktop/scripts/bundle.mjs`; native-search tools fall back to the
+repository-bundled prebuilt archives when no intranet mirror is configured. Nothing under
+`zcode/` is modified — this is the pristine-baseline build the M0 exit criteria ask for.
+
+**Run evidence** (to be appended as runs complete):
+
+- _pending first dispatch — see the [Installers workflow runs](https://github.com/payswapdotorg/MeshWork/actions/workflows/installers.yml)._
+

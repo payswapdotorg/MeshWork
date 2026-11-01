@@ -39,6 +39,15 @@ This is the Meshwork web application: a self-contained [Next.js 16](https://next
 
 Prerequisites: [Bun](https://bun.sh) 1.1+ (recommended) or Node.js 20+ with npm.
 
+One command (installs the app and a `meshwork` command — see the repo root [install.sh](../install.sh) and [INSTALLATION.md](../docs/INSTALLATION.md)):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/payswapdotorg/MeshWork/main/install.sh | sh
+meshwork start
+```
+
+Or manually:
+
 ```bash
 git clone https://github.com/payswapdotorg/MeshWork.git
 cd MeshWork/app

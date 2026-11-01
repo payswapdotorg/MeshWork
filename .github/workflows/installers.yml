@@ -1,0 +1,211 @@
+# .github/workflows/installers.yml — MeshWork M0: build the vendored ZCode desktop
+# installers (Linux + Windows) and the ZCode runtime distribution
+# (tarball + install.sh + latest.json) on sized runners, and attach them to a
+# GitHub Release on tags. The 4 GiB dev sandbox cannot finish the ~8.3k-module
+# renderer build (recorded in docs/ZCODE_BASELINE.md §3); hosted runners can.
+#
+# Triggers:
+#   - workflow_dispatch (manual; each product can be toggled)
+#   - push of tags starting with "v"  -> full matrix + GitHub Release
+
+name: Installers
+
+on:
+  workflow_dispatch:
+    inputs:
+      linux:
+        description: Build Linux desktop installers (AppImage/deb/rpm/pacman)
+        type: boolean
+        default: true
+      windows:
+        description: Build the Windows desktop installer (NSIS)
+        type: boolean
+        default: true
+      runtime:
+        description: Build the ZCode runtime distribution (tarball + install.sh)
+        type: boolean
+        default: true
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: installers-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux:
+    name: Linux desktop installers
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    if: github.event_name != 'workflow_dispatch' || inputs.linux
+    defaults:
+      run:
+        working-directory: zcode
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install packaging tools (rpmbuild for rpm, bsdtar for pacman)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm libarchive-tools fakeroot
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.14.0
+          cache: pnpm
+          cache-dependency-path: zcode/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Bundle desktop installers (AppImage, deb, rpm, pacman)
+        run: pnpm bundle:desktop --linux --x64
+
+      - name: Checksum installers
+        run: |
+          cd packages/desktop/dist
+          sha256sum -- *.AppImage *.deb *.rpm *.pkg.tar.zst 2>/dev/null > SHA256SUMS-linux.txt || true
+          ls -la
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installers-linux
+          if-no-files-found: error
+          path: |
+            zcode/packages/desktop/dist/*.AppImage
+            zcode/packages/desktop/dist/*.AppImage.blockmap
+            zcode/packages/desktop/dist/*.deb
+            zcode/packages/desktop/dist/*.rpm
+            zcode/packages/desktop/dist/*.pkg.tar.zst
+            zcode/packages/desktop/dist/SHA256SUMS-linux.txt
+
+  windows:
+    name: Windows desktop installer
+    runs-on: windows-latest
+    timeout-minutes: 120
+    if: github.event_name != 'workflow_dispatch' || inputs.windows
+    defaults:
+      run:
+        working-directory: zcode
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.14.0
+          cache: pnpm
+          cache-dependency-path: zcode/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Bundle desktop installer (NSIS)
+        run: pnpm bundle:desktop --win --x64
+
+      - name: Checksum installer
+        shell: bash
+        run: |
+          cd packages/desktop/dist
+          sha256sum -- *.exe *.exe.blockmap 2>/dev/null > SHA256SUMS-windows.txt || true
+          ls -la
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: installers-windows
+          if-no-files-found: error
+          path: |
+            zcode/packages/desktop/dist/*.exe
+            zcode/packages/desktop/dist/*.exe.blockmap
+            zcode/packages/desktop/dist/SHA256SUMS-windows.txt
+
+  runtime:
+    name: ZCode runtime distribution
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    if: github.event_name != 'workflow_dispatch' || inputs.runtime
+    defaults:
+      run:
+        working-directory: zcode
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.33.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.14.0
+          cache: pnpm
+          cache-dependency-path: zcode/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Resolve the download base URL
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            base="https://github.com/payswapdotorg/MeshWork/releases/download/$GITHUB_REF_NAME/"
+          else
+            base="https://github.com/payswapdotorg/MeshWork/releases/download/nightly/"
+          fi
+          echo "ZCODE_DIST_BASE_URL=$base" >> "$GITHUB_ENV"
+          echo "Runtime download base: $base"
+
+      - name: Build runtime package (tarball + install.sh + latest.json)
+        run: pnpm build:zcode --base-url "$ZCODE_DIST_BASE_URL"
+
+      - name: Smoke the built runtime (web server entry boots)
+        run: |
+          zcode_version="$(node -p "require('./dist/zcode/latest.json').version")"
+          mkdir -p dist/zcode/.smoke
+          tar -xzf "dist/zcode/releases/$zcode_version/zcode-$zcode_version.tar.gz" -C dist/zcode/.smoke
+          node dist/zcode/.smoke/zcode/bin/zcode.mjs --version
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zcode-runtime
+          if-no-files-found: error
+          path: |
+            zcode/dist/zcode/releases/**
+            zcode/dist/zcode/latest.json
+            zcode/dist/zcode/install.sh
+
+  release:
+    name: GitHub Release
+    needs: [linux, windows, runtime]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: >-
+      startsWith(github.ref, 'refs/tags/') &&
+      !failure() && !cancelled()
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: Lay out release files
+        run: |
+          mkdir -p release-out
+          find release-assets -type f -print -exec cp {} release-out/ \;
+          ls -la release-out
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: release-out/**
