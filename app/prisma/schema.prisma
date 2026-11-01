@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  tasks     Task[]
+}
+
+model Task {
+  id             String     @id @default(cuid())
+  projectId      String
+  project        Project    @relation(fields: [projectId], references: [id])
+  name           String
+  prompt         String     @default("")
+  status         String     @default("draft") // draft | in_progress | completed | error
+  model          String     @default("glm-5.3-max")
+  permissionMode String     @default("ask") // ask | safe | full
+  pinned         Boolean    @default(false)
+  unreadAt       DateTime?
+  archived       Boolean    @default(false)
+  groupId        String?
+  group          TaskGroup? @relation(fields: [groupId], references: [id])
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  messages       TaskMessage[]
+}
+
+// One row per conversation trace entry of a task (zcode conversation rows):
+// user bubbles, assistant text, reasoning (thinking trace), tool calls and
+// timeline markers. `payload` holds tool/marker specifics as JSON.
+model TaskMessage {
+  id         String   @id @default(cuid())
+  taskId     String
+  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  seq        Int
+  kind       String // user | assistant | reasoning | tool | marker | error
+  text       String   @default("")
+  payload    String   @default("{}")
+  durationMs Int?
+  status     String? // tool: pending | running | completed | failed | denied | stopped
+  createdAt  DateTime @default(now())
+
+  @@unique([taskId, seq])
+}
+
+// Manual task groups (zcode "By group" sidebar view).
+model TaskGroup {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  title     String
+  color     String   @default("gray") // gray | red | orange | yellow | green | blue | purple
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  tasks     Task[]
+}
+
+model Automation {
+  id          String   @id @default(cuid())
+  name        String
+  description String   @default("")
+  schedule    String   // human label, e.g. "Daily at 09:00"
+  cronExpr    String   @default("")
+  prompt      String   @default("") // instructions
+  target      String   @default("")
+  mode        String   @default("ask")
+  model       String   @default("glm-5.3-max")
+  status      String   @default("active") // active | paused | completed | failed
+  enabled     Boolean  @default(true)
+  runCount    Int      @default(0)
+  lastRunAt   DateTime?
+  nextRunAt   DateTime?
+  lastError   String?
+  createdAt   DateTime @default(now())
+  runs        AutomationRun[]
+}
+
+model AutomationRun {
+  id           String    @id @default(cuid())
+  automationId String
+  automation   Automation @relation(fields: [automationId], references: [id], onDelete: Cascade)
+  trigger      String    @default("schedule") // schedule | manual
+  status       String    @default("succeeded") // running | succeeded | failed | stopped | skipped
+  startedAt    DateTime  @default(now())
+  durationMs   Int?
+  error        String?
+  sessionId    String?
+
+  @@index([automationId, startedAt])
+}
+
+model Plugin {
+  id            String   @id @default(cuid())
+  key           String   @unique
+  name          String
+  description   String
+  category      String
+  installed     Boolean  @default(false)
+  enabled       Boolean  @default(true)
+  version       String   @default("1.0.0")
+  latestVersion String   @default("1.0.0")
+  author        String   @default("")
+  publisherType String   @default("community") // official | community
+  sourceKey     String   @default("meshwork-official")
+  featured      Boolean  @default(false)
+  components    String   @default("[]") // JSON: [{ kind, name, description }]
+  scope         String   @default("user") // user | workspace
+  icon          String   @default("") // emoji fallback avatar
+  createdAt     DateTime @default(now())
+}
+
+// Marketplace sources (zcode plugin store sources dialog).
+model MarketplaceSource {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  source      String // URL / git repo / path
+  official    Boolean  @default(false)
+  removable   Boolean  @default(true)
+  lastUpdated DateTime @default(now())
+}
+
+// Model providers (zcode Settings → Model settings).
+model ModelProvider {
+  id           String   @id @default(cuid())
+  key          String   @unique
+  name         String
+  baseUrl      String   @default("")
+  apiFormat    String   @default("openai-chat-completions") // anthropic-messages | openai-chat-completions | openai-responses
+  apiKey       String   @default("")
+  enabled      Boolean  @default(true)
+  builtin      Boolean  @default(false) // preset provider (Z.ai, BigModel, …)
+  account      Boolean  @default(false) // OAuth/plan provider — endpoints locked
+  logoKey      String   @default("")
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  models       ModelEntry[]
+}
+
+model ModelEntry {
+  id              String       @id @default(cuid())
+  providerId      String
+  provider        ModelProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  modelId         String
+  contextWindow   Int          @default(200000)
+  maxOutputTokens Int          @default(8192)
+  inputTypes      String       @default("[]") // JSON: text | image | video | audio | pdf (empty = text)
+  capabilities    String       @default("{}") // JSON: structuredOutput | webSearch | systemMessages
+  reasoningLevels String       @default("[]") // JSON: ordered levels low → high
+  enabled         Boolean      @default(true)
+  builtin         Boolean      @default(false)
+  displayOrder    Int          @default(0)
+
+  @@unique([providerId, modelId])
+}
+
+// Key/value JSON store for workspace + Meshwork settings
+// (connections strategy, sharing consent, settings sections, ...)
+model Setting {
+  key   String @id
+  value String
+}

@@ -60,6 +60,24 @@ The legacy [HTML design prototype](design/index.html) remains useful as an inter
 7. **Auditable economics.** Quotes, payment status, usage, provider attribution, refunds, disputes and settlement are separate verifiable records.
 8. **Reuse before reinvention.** Reuse ZCode, Linux networking primitives, established VPN/multipath projects and existing libraries after licensing, compatibility and security review.
 
+## Get the app
+
+The Meshwork web application lives in [`app/`](app). It is a self-contained Next.js 16 workspace
+(Typescript, Tailwind CSS 4, shadcn/ui, Prisma + SQLite) that reproduces the approved ZCode
+workspace behavior — tasks with thinking and tool traces, projects and task groups, browser/
+terminal/devices dock, automations with run history, the plugin marketplace and the restored
+ZCode settings incl. Model settings — plus the Meshwork connectivity network pages
+(Connections with all five aggregation modes, Connection Marketplace, devices and nodes).
+
+```bash
+git clone https://github.com/payswapdotorg/MeshWork.git
+cd MeshWork/app
+./setup.sh          # or: bun install && cp .env.example .env && bun run db:push
+bun run dev         # http://localhost:3000 — the workspace seeds itself on first run
+```
+
+See [`app/README.md`](app/README.md) for the full feature tour, scripts, structure and deployment notes.
+
 ## Start here
 
 - [Current TL UI handoff](docs/TL_HANDOFF_DESIGN_REPRODUCTION.md)
@@ -82,7 +100,7 @@ The legacy [HTML design prototype](design/index.html) remains useful as an inter
 - [x] Initial architecture, aggregation, security, research and milestone requirements written into this repository.
 - [ ] Fork/copy ZCode upstream into this repository and preserve all notices/licence obligations.
 - [ ] Build and verify baseline Linux and Windows desktop installers before product changes.
-- [ ] Implement New Task integration and complete UI regression coverage.
+- [x] Meshwork web application implemented in [`app/`](app) (ZCode workspace behavior restored: task traces, groups, automations, plugin marketplace, settings incl. Model settings; Meshwork Connections + Connection Marketplace per the approved references).
 - [ ] Implement the network capability model and Linux node adapter.
 - [ ] Demonstrate multi-WAN policy routing, failover, and true single-flow bonding independently.
 - [ ] Implement node marketplace, metering, group buying and payment reconciliation.
