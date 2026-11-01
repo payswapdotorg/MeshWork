@@ -35,7 +35,7 @@ export function CommunityPanel({
       <div className="flex items-center justify-end">
         <Button
           size="sm"
-          className="h-7 rounded-full mesh-action px-3 text-[12px] font-medium"
+          className="h-7 rounded-full mesh-action-blue px-3 text-[12px] font-medium"
           onClick={() => setView("group-buying")}
         >
           Community network
@@ -98,7 +98,7 @@ export function CommunityPanel({
           </dl>
           <Button
             size="sm"
-            className="mt-3.5 h-8 w-full mesh-action text-[12.5px] font-medium"
+            className="mt-3.5 h-8 w-full mesh-action-blue text-[12.5px] font-medium"
             onClick={() => setConsentOpen(true)}
           >
             Configure offer

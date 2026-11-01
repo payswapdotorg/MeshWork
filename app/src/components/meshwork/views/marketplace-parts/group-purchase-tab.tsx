@@ -98,7 +98,7 @@ export function GroupPurchaseTab({
           <div className="mt-4">
             <Button
               size="sm"
-              className="h-8 mesh-action text-[12.5px] font-medium"
+              className="h-8 mesh-action-blue text-[12.5px] font-medium"
               disabled={!canStart}
               onClick={startPool}
             >

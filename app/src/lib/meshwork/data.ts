@@ -591,8 +591,11 @@ export const SEED_MARKETPLACE_SOURCES = [
 ] as const;
 
 /** Legacy rows from earlier previews — removed on the next seed run.
- *  "personal" is re-created so the concept's project order applies. */
-export const LEGACY_PROJECT_KEYS = ["meshwork-build", "network-research", "personal"];
+ *  "personal" must NOT be listed: it is also a current project key, and the
+ *  legacy wipe deletes every task in a legacy project — listing it here
+ *  destroyed all Personal tasks on every server restart. Project order is
+ *  preserved without it: SEED_PROJECTS upserts are ordered by createdAt. */
+export const LEGACY_PROJECT_KEYS = ["meshwork-build", "network-research"];
 export const LEGACY_TASK_NAMES = ["Audit MeshLink gateway", "Aggregation planner", "Figma workspace"];
 export const LEGACY_AUTOMATION_NAMES = ["Check WAN health", "Alert on link degradation"];
 export const LEGACY_PLUGIN_KEYS = [

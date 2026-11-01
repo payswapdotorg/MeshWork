@@ -198,6 +198,23 @@
   background: #ffffff;
 }
 
+/* Marketplace primary action — Figma frame 8:36's deep action blue with
+   white text (sampled #0f73bc; white-on-#0f73bc = 5.0:1). Scoped to the
+   Connection Marketplace page, whose frame governs it; the rest of the
+   workspace keeps the approved concept's light button. */
+.mesh-action-blue {
+  background: #0f73bc;
+  color: #ffffff;
+}
+.mesh-action-blue:hover {
+  background: #1287d8;
+  color: #ffffff;
+}
+.mesh-action-blue:focus-visible {
+  outline: 2px solid #9db9f7;
+  outline-offset: 2px;
+}
+
 /* Soft network accent button ("Optimize paths"-style) */
 .mesh-net-action {
   background: #2d3137;

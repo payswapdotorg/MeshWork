@@ -74,7 +74,7 @@ export function OfferDialog({
               <Button
                 disabled
                 size="sm"
-                className="h-8 mesh-action text-[12.5px] font-medium"
+                className="h-8 mesh-action-blue text-[12.5px] font-medium"
               >
                 Purchase access
               </Button>

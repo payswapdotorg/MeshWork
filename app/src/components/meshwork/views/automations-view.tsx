@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useMeshStore } from "@/lib/meshwork/store";
 import { AUTOMATION_TEMPLATES, DEFAULT_MODEL, MESH_MODELS, PERMISSION_MODES } from "@/lib/meshwork/data";
 import type { AutomationRunVM, AutomationVM } from "@/lib/meshwork/types";
 import {
@@ -644,6 +645,7 @@ const RUNS_PAGE_SIZE = 8;
 function RunHistory({ automationId }: { automationId: string }) {
   const runsQuery = useAutomationRuns(automationId);
   const deleteRun = useDeleteAutomationRun();
+  const openTask = useMeshStore((s) => s.openTask);
   const [page, setPage] = useState(0);
 
   const runs = runsQuery.data?.runs ?? [];
@@ -727,7 +729,14 @@ function RunHistory({ automationId }: { automationId: string }) {
                       <DropdownMenuContent align="end" className="w-52">
                         <DropdownMenuItem
                           className="gap-2 text-[12.5px]"
-                          onSelect={() => toast.info("Opens the task session in the full build")}
+                          disabled={!run.sessionId}
+                          onSelect={() => {
+                            if (run.sessionId) {
+                              openTask(run.sessionId);
+                            } else {
+                              toast.info("This run has no session — runs before this build kept no transcript.");
+                            }
+                          }}
                         >
                           <ArrowLeft className="h-3.5 w-3.5" /> Go to session
                         </DropdownMenuItem>

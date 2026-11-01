@@ -61,7 +61,7 @@ export function PoolCard({
       <Button
         size="sm"
         className={cn(
-          "mesh-action text-[12.5px] font-medium",
+          "mesh-action-blue text-[12.5px] font-medium",
           full ? "mt-4" : "mt-3 w-full"
         )}
         onClick={onJoin}

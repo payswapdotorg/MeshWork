@@ -58,8 +58,7 @@ export function ListingCard({
         <p className="mt-0.5 text-[11px] text-muted-foreground">{listing.priceBasis}</p>
       </div>
       <Button
-        variant="ghost"
-        className="h-7 px-2.5 text-[12px] font-medium text-mesh-blue hover:bg-mesh-blue-soft/60 hover:text-mesh-blue"
+        className="h-7 px-3 text-[12px] font-medium mesh-action-blue"
         onClick={onViewOffer}
       >
         View offer

@@ -60,7 +60,7 @@ export function SellCapacityTab() {
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Button
             size="sm"
-            className="h-8 mesh-action text-[12.5px] font-medium"
+            className="h-8 mesh-action-blue text-[12.5px] font-medium"
             onClick={() => setConsentOpen(true)}
           >
             Review sharing permissions

@@ -1,9 +1,23 @@
 # Implementation Report — Meshwork Workspace UI Reproduction
 
 **Status:** TL implementation report (web workspace reproduction)
-**Date:** 2025-11-14
+**Date:** 2025-11-14 (rev. 2026-11-01 — post-review verification round)
 **Handoff:** `docs/TL_HANDOFF_DESIGN_REPRODUCTION.md`
 **Delivery target:** Meshwork workspace shell, New Task, Connections, Connection Marketplace, navigation and Settings behaviour, implemented as a Next.js 16 (App Router) web application in the TL's environment, per the handoff's requirement to reproduce the approved design using the available application foundation.
+
+---
+
+## 0. Post-review verification round (2026-11-01)
+
+Full browser end-to-end re-verification of the restored ZCode surfaces (settings, task traces, automations, plugins, sidebar groups) plus three fixes:
+
+| Fix | Area | Detail |
+|---|---|---|
+| **Run now → real session** | Automations | `POST /api/automations/[id]/run` now creates a real task session for the automation's instructions (project / permission mode / model carried over) with the full thinking + tool + conversation trace; `AutomationRun.sessionId` links them. "Go to session" in the run history opens the normal ZCode task UI (was a stub toast). |
+| **Legacy-seed data wipe** | Tasks / persistence | `"personal"` was listed in `LEGACY_PROJECT_KEYS` while also being a current project key — every server restart deleted **all tasks in the Personal project**. Removed from the legacy list; task ids verified stable across restarts. |
+| **Marketplace action buttons** | Connection Marketplace | Frame 8:36's primary actions were rendered with the workspace's light button style. Added scoped `.mesh-action-blue` (#0f73bc fill, white text — the frame's sampled action blue, 5.0:1) for View offer, Join this pool, Configure offer, Community network, offer-dialog and tab primary actions. The rest of the workspace keeps the approved concept's light button. |
+
+Verified in-browser this round (evidence `docs/evidence/verify-*.png`): app loads clean (no console/hydration errors on warm loads; the cold-compile first load shows a transient React useId mismatch from Next 16 dev-mode lazy compilation — framework artifact, clean on every subsequent load); M logo spacing (≈14px per reference) and docked/expanded toggle (252px ↔ 58px); task history opens the full task UI with expandable thinking traces, tool results and reply composer; Settings two-pane restore incl. Model settings (providers list, connection mode, quota bars, per-model Test/Edit/Disable — toggle persisted via API round-trip) and Back-to-workspace restoring the previous view; Automations create-from-template / edit / Run now / run history / Go to session; Plugin Marketplace sources (consent-gated add, remove, refresh), install/uninstall (uninstall resets enabled), enable toggles persisted, Public/Community/Personal segments; Connections — all five aggregation modes recompute the estimate and persist (`single`/`load-balance`/`bond`/`failover`/`redundancy` verified via API); sidebar task groups (By group view, create, color, rename, options); Terminal dock transcript with honest command refusal; composer golden path (Create task → task view with traces opens immediately).
 
 ---
 
