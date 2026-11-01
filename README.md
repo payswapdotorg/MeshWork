@@ -18,6 +18,15 @@ Examples:
 
 Users should not need to understand MPTCP, policy routing, Linux traffic control, captive portals, WireGuard, gateways or payment reconciliation to ask for these outcomes.
 
+## Repository layout
+
+| Path | Contents |
+|---|---|
+| [`zcode/`](zcode) | Vendored [zai-org/ZCode](https://github.com/zai-org/zcode) at pinned commit `a60ba6a7e5` (Apache-2.0, notices preserved) — the desktop/runtime base per [ADR-001](docs/ADR-001-ZCODE-BASE.md); build baseline in [docs/ZCODE_BASELINE.md](docs/ZCODE_BASELINE.md). |
+| [`app/`](app) | The Meshwork web workspace (Next.js 16) — the TL design-handoff implementation (see [Get the app](#get-the-app)). |
+| [`design/`](design) | Approved HTML design prototypes (reference only). |
+| [`docs/`](docs) | Requirements, ADRs, plans, handoffs, reports and evidence. |
+
 ## Foundation and upstream
 
 - Base: [zai-org/ZCode](https://github.com/zai-org/ZCode), an Apache-2.0 desktop/web coding-agent workspace with an existing Electron desktop app, shared UI, services/RPC, Agent CLI/runtime, plugins, automations, browser, terminal and dynamic-workflow compiler/runtime.

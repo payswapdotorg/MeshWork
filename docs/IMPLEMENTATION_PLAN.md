@@ -56,14 +56,14 @@ The TL owns integration, source-of-truth documentation, interfaces, sequencing, 
 
 ### M0 — Fork, baseline and source ownership
 
-- Fork/copy ZCode into payswapdotorg/MeshWork.
-- Confirm exact upstream commit, licences, git history strategy, dependency licences and third-party notices.
-- Build Linux and Windows desktop apps without Meshwork changes.
-- Verify projects/tasks, task session, Browser, Terminal, automations, plugins, settings and memory.
-- Record baseline unit/E2E/architecture test results and installer artifacts.
-- Add architecture ownership and source-of-truth docs.
+- Fork/copy ZCode into payswapdotorg/MeshWork. — **DONE (2026-11-01):** vendored pristine at `zcode/`, pinned upstream `a60ba6a7e5a06742270ca605f5d2cc2766afa7e1`; record in [ZCODE_BASELINE.md](ZCODE_BASELINE.md).
+- Confirm exact upstream commit, licences, git history strategy, dependency licences and third-party notices. — **DONE:** Apache-2.0 + NOTICE.md + THIRD-PARTY-NOTICES.md preserved verbatim; no submodules; no files over the GitHub size limit.
+- Build Linux and Windows desktop apps without Meshwork changes. — **PARTIAL/BLOCKED (environment):** `pnpm install` + 9 package builds + desktop tsup/tsc succeed in the 4 GiB sandbox; the ~8.3 k-module renderer vite build OOM-kills at 3.54 GB RSS (kernel-verified). Needs a ≥ 8 GB runner (GitHub Actions recommended); commands and pins recorded in the baseline doc.
+- Verify projects/tasks, task session, Browser, Terminal, automations, plugins, settings and memory. — **OPEN:** awaits the runner-sized build (no display in the sandbox; the web workspace reproduction in `app/` covers the corresponding UX flows meanwhile).
+- Record baseline unit/E2E/architecture test results and installer artifacts. — **PARTIAL:** install/build baseline recorded with evidence; installer artifacts pending the sized runner.
+- Add architecture ownership and source-of-truth docs. — **DONE:** ADR-001 + this plan + ZCODE_BASELINE.md.
 
-Exit: clean baseline launch/install on Linux and Windows; baseline failures explicitly recorded, no regressions introduced.
+Exit: clean baseline launch/install on Linux and Windows; baseline failures explicitly recorded, no regressions introduced. — launch/install still open on the sized runner; failures so far are recorded honestly with root cause.
 
 ### M1 — New Task-first workspace
 
